@@ -49,6 +49,22 @@ class CambioTracker {
         document.getElementById('clearDataBtn').addEventListener('click', () => {
             this.clearAllData();
         });
+
+        // Event delegation for edit/delete/save/cancel buttons in historical rounds
+        document.getElementById('recentRounds').addEventListener('click', (e) => {
+            if (e.target.classList.contains('btn-edit')) {
+                const index = parseInt(e.target.dataset.index);
+                this.editRound(index);
+            } else if (e.target.classList.contains('btn-delete')) {
+                const index = parseInt(e.target.dataset.index);
+                this.deleteRound(index);
+            } else if (e.target.classList.contains('btn-save')) {
+                const index = parseInt(e.target.dataset.index);
+                this.saveEditedRound(index);
+            } else if (e.target.classList.contains('btn-cancel')) {
+                this.cancelEdit();
+            }
+        });
     }
 
     // Add a new round
@@ -135,11 +151,18 @@ class CambioTracker {
         document.getElementById('mikeOverallTotal').textContent = mikeOverallTotal;
         document.getElementById('preetaOverallTotal').textContent = preetaOverallTotal;
 
+        // Calculate and update deltas
+        const sessionDelta = mikeSessionTotal - preetaSessionTotal;
+        const totalDelta = mikeOverallTotal - preetaOverallTotal;
+
+        this.updateDelta('sessionDelta', sessionDelta);
+        this.updateDelta('totalDelta', totalDelta);
+
         // Update recent rounds (show last 10)
         this.updateRecentRounds();
     }
 
-    // Update recent rounds display
+    // Update historical rounds display
     updateRecentRounds() {
         const recentRoundsDiv = document.getElementById('recentRounds');
 
@@ -148,9 +171,12 @@ class CambioTracker {
             return;
         }
 
-        const recentRounds = this.rounds.slice(-10).reverse();
+        // Show all rounds in reverse order (newest first)
+        const allRounds = [...this.rounds].reverse();
 
-        recentRoundsDiv.innerHTML = recentRounds.map(round => `
+        recentRoundsDiv.innerHTML = allRounds.map((round, reverseIndex) => {
+            const actualIndex = this.rounds.length - 1 - reverseIndex;
+            return `
             <div class="round-item">
                 <div class="round-session">S${round.session}</div>
                 <div class="round-scores">
@@ -165,8 +191,32 @@ class CambioTracker {
                     <span>M: ${round.mikeOverallTotal}</span>
                     <span>P: ${round.preetaOverallTotal}</span>
                 </div>
+                <div class="round-actions">
+                    <button class="btn-edit" data-index="${actualIndex}">Edit</button>
+                    <button class="btn-delete" data-index="${actualIndex}">Delete</button>
+                </div>
             </div>
-        `).join('');
+            `;
+        }).join('');
+    }
+
+    // Update delta display
+    updateDelta(elementId, deltaValue) {
+        const element = document.getElementById(elementId);
+
+        // Format the delta with absolute value and player name
+        let displayValue;
+
+        if (deltaValue > 0) {
+            displayValue = `+${deltaValue} (Mike)`;
+        } else if (deltaValue < 0) {
+            displayValue = `+${Math.abs(deltaValue)} (Preeta)`;
+        } else {
+            displayValue = '0 (Tied)';
+        }
+
+        element.textContent = displayValue;
+        element.className = 'delta-value';
     }
 
     // Export data as CSV
@@ -246,6 +296,122 @@ class CambioTracker {
         };
 
         reader.readAsText(file);
+    }
+
+    // Delete a specific round
+    deleteRound(index) {
+        if (confirm('Are you sure you want to delete this round? This will recalculate all totals.')) {
+            // Remove the round
+            this.rounds.splice(index, 1);
+
+            // Recalculate all totals from scratch
+            this.recalculateAllTotals();
+
+            // Update current session to be the last session number + 1
+            // If no rounds left, reset to 1
+            if (this.rounds.length > 0) {
+                const lastRound = this.rounds[this.rounds.length - 1];
+                this.currentSession = lastRound.session + 1;
+            } else {
+                this.currentSession = 1;
+            }
+
+            this.saveData();
+            this.updateUI();
+        }
+    }
+
+    // Edit a specific round
+    editRound(index) {
+        const round = this.rounds[index];
+
+        // Find the round item in the DOM
+        const roundItems = document.querySelectorAll('.round-item');
+        const allRounds = [...this.rounds].reverse();
+        const reverseIndex = this.rounds.length - 1 - index;
+        const roundItem = roundItems[reverseIndex];
+
+        // Replace the round item with an editable form
+        roundItem.innerHTML = `
+            <div class="round-session">S${round.session}</div>
+            <div class="round-edit-form">
+                <input type="number" class="edit-input" id="edit-mike-${index}" value="${round.mikeScore}" />
+                <input type="number" class="edit-input" id="edit-preeta-${index}" value="${round.preetaScore}" />
+            </div>
+            <div class="round-scores">
+                <span>M: ${round.mikeSessionTotal}</span>
+                <span>P: ${round.preetaSessionTotal}</span>
+            </div>
+            <div class="round-scores">
+                <span>M: ${round.mikeOverallTotal}</span>
+                <span>P: ${round.preetaOverallTotal}</span>
+            </div>
+            <div class="round-actions">
+                <button class="btn-save" data-index="${index}">Save</button>
+                <button class="btn-cancel" data-index="${index}">Cancel</button>
+            </div>
+        `;
+
+        // Focus on the first input
+        document.getElementById(`edit-mike-${index}`).focus();
+    }
+
+    // Save edited round
+    saveEditedRound(index) {
+        const newMikeScore = parseInt(document.getElementById(`edit-mike-${index}`).value);
+        const newPreetaScore = parseInt(document.getElementById(`edit-preeta-${index}`).value);
+
+        // Validate inputs
+        if (isNaN(newMikeScore) || isNaN(newPreetaScore)) {
+            alert('Please enter valid numbers');
+            return;
+        }
+
+        // Update the round's individual scores
+        this.rounds[index].mikeScore = newMikeScore;
+        this.rounds[index].preetaScore = newPreetaScore;
+
+        // Recalculate all totals from this point forward
+        this.recalculateAllTotals();
+
+        this.saveData();
+        this.updateUI();
+    }
+
+    // Cancel editing
+    cancelEdit() {
+        // Just refresh the UI to restore the original view
+        this.updateUI();
+    }
+
+    // Recalculate all session and overall totals from scratch
+    recalculateAllTotals() {
+        let currentSession = 1;
+        let mikeSessionTotal = 0;
+        let preetaSessionTotal = 0;
+        let mikeOverallTotal = 0;
+        let preetaOverallTotal = 0;
+
+        this.rounds.forEach((round, index) => {
+            // If session changed, reset session totals
+            if (round.session !== currentSession) {
+                currentSession = round.session;
+                mikeSessionTotal = 0;
+                preetaSessionTotal = 0;
+            }
+
+            // Add current round scores
+            mikeSessionTotal += round.mikeScore;
+            preetaSessionTotal += round.preetaScore;
+            mikeOverallTotal += round.mikeScore;
+            preetaOverallTotal += round.preetaScore;
+
+            // Update the round with recalculated totals
+            this.rounds[index].mikeSessionTotal = mikeSessionTotal;
+            this.rounds[index].preetaSessionTotal = preetaSessionTotal;
+            this.rounds[index].mikeOverallTotal = mikeOverallTotal;
+            this.rounds[index].preetaOverallTotal = preetaOverallTotal;
+        });
     }
 
     // Clear all data

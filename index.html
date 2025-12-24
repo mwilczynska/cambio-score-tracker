@@ -39,6 +39,21 @@
                 </form>
             </div>
 
+            <!-- Delta Statistics -->
+            <div class="delta-card">
+                <h2>Current Deltas</h2>
+                <div class="delta-grid">
+                    <div class="delta-item">
+                        <span class="label">Session Delta:</span>
+                        <span id="sessionDelta" class="delta-value">0</span>
+                    </div>
+                    <div class="delta-item">
+                        <span class="label">Total Delta:</span>
+                        <span id="totalDelta" class="delta-value">0</span>
+                    </div>
+                </div>
+            </div>
+
             <!-- Current Totals -->
             <div class="totals-card">
                 <h2>Current Totals</h2>
@@ -67,9 +82,9 @@
                 <button id="newSessionBtn" class="btn-secondary">Start New Session</button>
             </div>
 
-            <!-- Recent Rounds -->
+            <!-- Historical Rounds -->
             <div class="recent-rounds-card">
-                <h2>Recent Rounds</h2>
+                <h2>Historical Rounds</h2>
                 <div id="recentRounds" class="rounds-list"></div>
             </div>
 
