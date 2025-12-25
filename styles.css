@@ -50,11 +50,11 @@ header {
     padding: 0.75rem 1.5rem;
     border-radius: 0.75rem;
     box-shadow: var(--shadow);
-    display: inline-block;
+    /* display: inline-block; */
 }
 
 header h1 {
-    font-size: 3.45rem;
+    font-size: 3.6rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
@@ -237,7 +237,7 @@ h2 {
 .character-left img,
 .character-right img {
     width: 200px;
-    height: 420px;
+    height: 450px;
     display: block;
     filter: drop-shadow(0 4px 6px rgba(11, 41, 67, 0.2));
     transition: transform 0.3s ease;
