@@ -25,7 +25,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background-image: url('background01.png');
+    background-image: url('images/background01.png');
     background-repeat: repeat;
     background-attachment: fixed;
     background-size: auto;
@@ -236,6 +236,42 @@ h2 {
     text-align: center;
 }
 
+.character-images {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.character-left,
+.character-right {
+    flex: 0 0 auto;
+    max-width: 200px;
+}
+
+.character-left {
+    text-align: left;
+}
+
+.character-right {
+    text-align: right;
+}
+
+.character-left img,
+.character-right img {
+    width: 100%;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 4px 6px rgba(11, 41, 67, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.character-left img:hover,
+.character-right img:hover {
+    transform: scale(1.05);
+}
+
 .rounds-list {
     max-height: 500px;
     overflow-x: auto;
@@ -410,6 +446,11 @@ h2 {
 }
 
 @media (max-width: 768px) {
+    .character-left,
+    .character-right {
+        max-width: 150px;
+    }
+
     .rounds-header,
     .round-row {
         grid-template-columns: 50px 60px repeat(2, 1fr) 80px;
