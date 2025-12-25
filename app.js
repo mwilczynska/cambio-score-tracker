@@ -158,6 +158,9 @@ class CambioTracker {
         this.updateDelta('sessionDelta', sessionDelta);
         this.updateDelta('totalDelta', totalDelta);
 
+        // Update character images based on session delta
+        this.updateCharacterImages(sessionDelta);
+
         // Update recent rounds (show last 10)
         this.updateRecentRounds();
     }
@@ -253,6 +256,38 @@ class CambioTracker {
 
         element.textContent = displayValue;
         element.className = 'delta-value';
+    }
+
+    // Update character images based on session delta
+    updateCharacterImages(sessionDelta) {
+        const mikeImage = document.getElementById('mikeImage');
+        const preetaImage = document.getElementById('preetaImage');
+        const absDelta = Math.abs(sessionDelta);
+
+        // Reset both to neutral first
+        let mikeImageSrc = 'images/mike_neutral.png';
+        let preetaImageSrc = 'images/preeta_neutral.png';
+
+        // Determine which player is losing (higher score is worse)
+        if (sessionDelta > 0) {
+            // Mike has higher score (losing)
+            if (absDelta >= 30) {
+                mikeImageSrc = 'images/mike_angry.png';
+            } else if (absDelta >= 20) {
+                mikeImageSrc = 'images/mike_annoyed.png';
+            }
+        } else if (sessionDelta < 0) {
+            // Preeta has higher score (losing)
+            if (absDelta >= 30) {
+                preetaImageSrc = 'images/preeta_angry.png';
+            } else if (absDelta >= 20) {
+                preetaImageSrc = 'images/preeta_annoyed.png';
+            }
+        }
+
+        // Update the image sources
+        mikeImage.src = mikeImageSrc;
+        preetaImage.src = preetaImageSrc;
     }
 
     // Export data as CSV

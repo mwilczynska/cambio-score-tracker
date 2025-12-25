@@ -229,33 +229,17 @@ h2 {
     color: var(--text-primary);
 }
 
-.new-session-control {
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 2px solid var(--border-color);
-    text-align: center;
-}
-
-.character-images {
+.character-score-container {
     display: flex;
     justify-content: space-between;
-    align-items: flex-end;
-    gap: 1rem;
-    margin-top: 1.5rem;
+    align-items: center;
+    gap: 1.5rem;
 }
 
 .character-left,
 .character-right {
     flex: 0 0 auto;
     max-width: 200px;
-}
-
-.character-left {
-    text-align: left;
-}
-
-.character-right {
-    text-align: right;
 }
 
 .character-left img,
@@ -270,6 +254,32 @@ h2 {
 .character-left img:hover,
 .character-right img:hover {
     transform: scale(1.05);
+}
+
+.character-score-container .score-input-card {
+    flex: 1;
+    min-width: 0;
+}
+
+.character-score-container .score-input-card h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.character-score-container .input-group {
+    margin-bottom: 1rem;
+}
+
+.character-score-container .input-group:last-of-type {
+    margin-bottom: 1.5rem;
+}
+
+.new-session-control {
+    background-color: var(--card-background);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    text-align: center;
 }
 
 .rounds-list {
@@ -446,6 +456,10 @@ h2 {
 }
 
 @media (max-width: 768px) {
+    .character-score-container {
+        gap: 1rem;
+    }
+
     .character-left,
     .character-right {
         max-width: 150px;
@@ -473,8 +487,14 @@ h2 {
 }
 
 @media (max-width: 480px) {
-    .input-row {
-        grid-template-columns: 1fr;
+    .character-score-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .character-left,
+    .character-right {
+        max-width: 180px;
     }
 
     header h1 {

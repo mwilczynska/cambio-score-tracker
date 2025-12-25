@@ -23,11 +23,15 @@
                 </div>
             </div>
 
-            <!-- Score Input Form -->
-            <div class="score-input-card">
-                <h2>Add New Round</h2>
-                <form id="scoreForm">
-                    <div class="input-row">
+            <!-- Character Images and Score Input -->
+            <div class="character-score-container">
+                <div class="character-left">
+                    <img src="images/mike_neutral.png" alt="Mike" id="mikeImage">
+                </div>
+
+                <div class="score-input-card">
+                    <h2>Add New Round</h2>
+                    <form id="scoreForm">
                         <div class="input-group">
                             <label for="mikeScore">Mike's Score</label>
                             <input type="number" id="mikeScore" name="mikeScore" required>
@@ -36,22 +40,18 @@
                             <label for="preetaScore">Preeta's Score</label>
                             <input type="number" id="preetaScore" name="preetaScore" required>
                         </div>
-                    </div>
-                    <button type="submit" class="btn-primary">Add New Round</button>
-                </form>
-                <div class="new-session-control">
-                    <button id="newSessionBtn" class="btn-secondary">Start New Session</button>
+                        <button type="submit" class="btn-primary">Add New Round</button>
+                    </form>
                 </div>
-            </div>
 
-            <!-- Character Images -->
-            <div class="character-images">
-                <div class="character-left">
-                    <img src="images/mike_neutral.png" alt="Mike" id="mikeImage">
-                </div>
                 <div class="character-right">
                     <img src="images/preeta_neutral.png" alt="Preeta" id="preetaImage">
                 </div>
+            </div>
+
+            <!-- New Session Button -->
+            <div class="new-session-control">
+                <button id="newSessionBtn" class="btn-secondary">Start New Session</button>
             </div>
 
             <!-- Delta Statistics -->
