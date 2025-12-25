@@ -54,7 +54,7 @@ header {
 }
 
 header h1 {
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--text-primary);
     margin: 0;
@@ -62,6 +62,10 @@ header h1 {
 
 main > * + * {
     margin-top: 1.5rem;
+}
+
+.character-score-container + .new-session-control {
+    margin-top: 0.75rem;
 }
 
 .session-info {
@@ -73,7 +77,7 @@ main > * + * {
 }
 
 .session-number {
-    font-size: 1rem;
+    font-size: 1.25rem;
     font-weight: 600;
 }
 
@@ -83,8 +87,7 @@ main > * + * {
 }
 
 .score-input-card,
-.delta-card,
-.totals-card,
+.stats-card,
 .recent-rounds-card,
 .data-management {
     background-color: var(--card-background);
@@ -94,7 +97,7 @@ main > * + * {
 }
 
 h2 {
-    font-size: 1.25rem;
+    font-size: 1.5rem;
     margin-bottom: 1rem;
     font-weight: 600;
     text-align: center;
@@ -116,14 +119,14 @@ h2 {
     margin-bottom: 0.5rem;
     font-weight: 500;
     color: var(--text-secondary);
-    font-size: 0.875rem;
+    font-size: 1.125rem;
 }
 
 .input-group input {
-    padding: 0.625rem;
+    padding: 0.75rem;
     border: 2px solid var(--border-color);
     border-radius: 0.5rem;
-    font-size: 1rem;
+    font-size: 1.25rem;
     transition: border-color 0.2s;
 }
 
@@ -135,10 +138,10 @@ h2 {
 .btn-primary,
 .btn-secondary,
 .btn-danger {
-    padding: 0.625rem 1.25rem;
+    padding: 0.75rem 1.25rem;
     border: none;
     border-radius: 0.5rem;
-    font-size: 0.875rem;
+    font-size: 1.125rem;
     font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
@@ -174,43 +177,13 @@ h2 {
     background-color: var(--danger-hover);
 }
 
-.totals-grid {
-    display: grid;
-    gap: 1rem;
-}
-
-.total-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 1rem;
-    background-color: var(--background);
-    border-radius: 0.5rem;
-}
-
-.total-item.highlight {
-    background-color: rgba(11, 41, 67, 0.08);
-    font-weight: 600;
-    border-left: 3px solid var(--secondary-color);
-}
-
-.total-item .label {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-}
-
-.total-item .value {
-    color: var(--text-primary);
-    font-size: 1.125rem;
-    font-weight: 700;
-}
-
-.delta-grid {
+.stats-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
 }
 
-.delta-item {
+.stat-item {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -220,14 +193,27 @@ h2 {
     text-align: center;
 }
 
-.delta-item .label {
+.stat-item.highlight {
+    background-color: rgba(11, 41, 67, 0.08);
+    border-left: 3px solid var(--secondary-color);
+}
+
+.stat-item .label {
     color: var(--text-secondary);
-    font-size: 0.8125rem;
+    font-size: 1.125rem;
+    font-weight: 700;
     margin-bottom: 0.5rem;
 }
 
+.stat-item .value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-top: 0.25rem;
+    color: var(--text-primary);
+}
+
 .delta-value {
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 700;
     margin-top: 0.25rem;
     color: var(--text-primary);
@@ -244,18 +230,22 @@ h2 {
 .character-right {
     flex: 0 0 auto;
     max-width: 200px;
+    display: flex;
+    align-items: flex-start;
 }
 
 .character-left img,
 .character-right img {
-    width: 100%;
-    height: auto;
+    width: 200px;
+    height: 420px;
     display: block;
     filter: drop-shadow(0 4px 6px rgba(11, 41, 67, 0.2));
     transition: transform 0.3s ease;
     object-fit: cover;
     object-position: center 25%;
     clip-path: inset(5% 0 20% 0);
+    margin-top: -5%;
+    margin-bottom: -20%;
 }
 
 .character-left img:hover,
@@ -266,6 +256,7 @@ h2 {
 .character-score-container .score-input-card {
     flex: 1;
     min-width: 0;
+    align-self: flex-start;
 }
 
 .character-score-container .score-input-card h2 {
@@ -319,7 +310,8 @@ h2 {
     align-items: center;
     justify-content: center;
     padding: 0.25rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 .header-cell-group {
@@ -330,7 +322,7 @@ h2 {
 
 .player-header {
     text-align: center;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1rem;
     padding: 0.25rem;
     border-bottom: 2px solid rgba(255, 255, 255, 0.3);
@@ -344,9 +336,9 @@ h2 {
 
 .subheader {
     text-align: center;
-    font-size: 0.75rem;
+    font-size: 1rem;
     padding: 0.25rem;
-    font-weight: 500;
+    font-weight: 600;
 }
 
 .rounds-body {
@@ -373,7 +365,7 @@ h2 {
 .cell {
     text-align: center;
     padding: 0.25rem;
-    font-size: 0.875rem;
+    font-size: 1rem;
 }
 
 .cell-group {
