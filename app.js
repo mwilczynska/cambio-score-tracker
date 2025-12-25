@@ -271,16 +271,16 @@ class CambioTracker {
         // Determine which player is losing (higher score is worse)
         if (sessionDelta > 0) {
             // Mike has higher score (losing)
-            if (absDelta >= 30) {
+            if (absDelta >= 20) {
                 mikeImageSrc = 'images/mike_angry.png';
-            } else if (absDelta >= 20) {
+            } else if (absDelta >= 10) {
                 mikeImageSrc = 'images/mike_annoyed.png';
             }
         } else if (sessionDelta < 0) {
             // Preeta has higher score (losing)
-            if (absDelta >= 30) {
+            if (absDelta >= 20) {
                 preetaImageSrc = 'images/preeta_angry.png';
-            } else if (absDelta >= 20) {
+            } else if (absDelta >= 10) {
                 preetaImageSrc = 'images/preeta_annoyed.png';
             }
         }
