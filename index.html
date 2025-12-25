@@ -34,11 +34,17 @@
                     <form id="scoreForm">
                         <div class="input-group">
                             <label for="mikeScore">Mike's Score</label>
-                            <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="mikeScore" name="mikeScore" required>
+                            <div class="input-with-toggle">
+                                <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="mikeScore" name="mikeScore" required>
+                                <button type="button" class="btn-toggle-sign" data-input="mikeScore">+/-</button>
+                            </div>
                         </div>
                         <div class="input-group">
                             <label for="preetaScore">Preeta's Score</label>
-                            <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="preetaScore" name="preetaScore" required>
+                            <div class="input-with-toggle">
+                                <input type="text" inputmode="numeric" pattern="-?[0-9]*" id="preetaScore" name="preetaScore" required>
+                                <button type="button" class="btn-toggle-sign" data-input="preetaScore">+/-</button>
+                            </div>
                         </div>
                         <button type="submit" class="btn-primary">Add New Round</button>
                     </form>

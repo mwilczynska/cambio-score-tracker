@@ -50,6 +50,28 @@ class CambioTracker {
             this.clearAllData();
         });
 
+        // Event listeners for +/- toggle buttons
+        document.querySelectorAll('.btn-toggle-sign').forEach(button => {
+            button.addEventListener('click', () => {
+                const inputId = button.dataset.input;
+                const input = document.getElementById(inputId);
+                const currentValue = input.value.trim();
+
+                if (currentValue === '' || currentValue === '0') {
+                    // If empty or zero, do nothing
+                    return;
+                }
+
+                if (currentValue.startsWith('-')) {
+                    // Remove minus sign
+                    input.value = currentValue.substring(1);
+                } else {
+                    // Add minus sign
+                    input.value = '-' + currentValue;
+                }
+            });
+        });
+
         // Event delegation for edit/delete/save/cancel buttons in historical rounds
         document.getElementById('recentRounds').addEventListener('click', (e) => {
             if (e.target.classList.contains('btn-edit')) {
