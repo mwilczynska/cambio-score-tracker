@@ -9,7 +9,9 @@
 <body>
     <div class="container">
         <header>
-            <h1>Cambio Score Tracker</h1>
+            <div class="title-box">
+                <h1>Cambio Score Tracker</h1>
+            </div>
         </header>
 
         <main>
@@ -35,8 +37,11 @@
                             <input type="number" id="preetaScore" name="preetaScore" required>
                         </div>
                     </div>
-                    <button type="submit" class="btn-primary">Add Round</button>
+                    <button type="submit" class="btn-primary">Add New Round</button>
                 </form>
+                <div class="new-session-control">
+                    <button id="newSessionBtn" class="btn-secondary">Start New Session</button>
+                </div>
             </div>
 
             <!-- Delta Statistics -->
@@ -75,11 +80,6 @@
                         <span id="preetaOverallTotal" class="value">0</span>
                     </div>
                 </div>
-            </div>
-
-            <!-- Session Control -->
-            <div class="session-control">
-                <button id="newSessionBtn" class="btn-secondary">Start New Session</button>
             </div>
 
             <!-- Historical Rounds -->

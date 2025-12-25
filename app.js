@@ -174,30 +174,66 @@ class CambioTracker {
         // Show all rounds in reverse order (newest first)
         const allRounds = [...this.rounds].reverse();
 
-        recentRoundsDiv.innerHTML = allRounds.map((round, reverseIndex) => {
+        // Build table with headers
+        let tableHTML = `
+            <div class="rounds-table">
+                <div class="rounds-header">
+                    <div class="header-cell">Round</div>
+                    <div class="header-cell">Session</div>
+                    <div class="header-cell-group">
+                        <div class="player-header">Mike</div>
+                        <div class="subheader-group">
+                            <div class="subheader">Round</div>
+                            <div class="subheader">Session</div>
+                            <div class="subheader">Total</div>
+                        </div>
+                    </div>
+                    <div class="header-cell-group">
+                        <div class="player-header">Preeta</div>
+                        <div class="subheader-group">
+                            <div class="subheader">Round</div>
+                            <div class="subheader">Session</div>
+                            <div class="subheader">Total</div>
+                        </div>
+                    </div>
+                    <div class="header-cell">Actions</div>
+                </div>
+                <div class="rounds-body">
+        `;
+
+        // Add each round row
+        allRounds.forEach((round, reverseIndex) => {
             const actualIndex = this.rounds.length - 1 - reverseIndex;
-            return `
-            <div class="round-item">
-                <div class="round-session">S${round.session}</div>
-                <div class="round-scores">
-                    <span>M: ${round.mikeScore}</span>
-                    <span>P: ${round.preetaScore}</span>
+            const roundNumber = actualIndex + 1;
+
+            tableHTML += `
+                <div class="round-row">
+                    <div class="cell">${roundNumber}</div>
+                    <div class="cell">${round.session}</div>
+                    <div class="cell-group">
+                        <div class="cell">${round.mikeScore}</div>
+                        <div class="cell">${round.mikeSessionTotal}</div>
+                        <div class="cell">${round.mikeOverallTotal}</div>
+                    </div>
+                    <div class="cell-group">
+                        <div class="cell">${round.preetaScore}</div>
+                        <div class="cell">${round.preetaSessionTotal}</div>
+                        <div class="cell">${round.preetaOverallTotal}</div>
+                    </div>
+                    <div class="cell actions-cell">
+                        <button class="btn-icon btn-edit" data-index="${actualIndex}" title="Edit">✏️</button>
+                        <button class="btn-icon btn-delete" data-index="${actualIndex}" title="Delete">🗑️</button>
+                    </div>
                 </div>
-                <div class="round-scores">
-                    <span>M: ${round.mikeSessionTotal}</span>
-                    <span>P: ${round.preetaSessionTotal}</span>
-                </div>
-                <div class="round-scores">
-                    <span>M: ${round.mikeOverallTotal}</span>
-                    <span>P: ${round.preetaOverallTotal}</span>
-                </div>
-                <div class="round-actions">
-                    <button class="btn-edit" data-index="${actualIndex}">Edit</button>
-                    <button class="btn-delete" data-index="${actualIndex}">Delete</button>
+            `;
+        });
+
+        tableHTML += `
                 </div>
             </div>
-            `;
-        }).join('');
+        `;
+
+        recentRoundsDiv.innerHTML = tableHTML;
     }
 
     // Update delta display
@@ -325,30 +361,33 @@ class CambioTracker {
     editRound(index) {
         const round = this.rounds[index];
 
-        // Find the round item in the DOM
-        const roundItems = document.querySelectorAll('.round-item');
-        const allRounds = [...this.rounds].reverse();
+        // Find the round row in the DOM
+        const roundRows = document.querySelectorAll('.round-row');
         const reverseIndex = this.rounds.length - 1 - index;
-        const roundItem = roundItems[reverseIndex];
+        const roundRow = roundRows[reverseIndex];
+        const roundNumber = index + 1;
 
-        // Replace the round item with an editable form
-        roundItem.innerHTML = `
-            <div class="round-session">S${round.session}</div>
-            <div class="round-edit-form">
-                <input type="number" class="edit-input" id="edit-mike-${index}" value="${round.mikeScore}" />
-                <input type="number" class="edit-input" id="edit-preeta-${index}" value="${round.preetaScore}" />
+        // Replace the round row with an editable form
+        roundRow.innerHTML = `
+            <div class="cell">${roundNumber}</div>
+            <div class="cell">${round.session}</div>
+            <div class="cell-group">
+                <div class="cell">
+                    <input type="number" class="edit-input" id="edit-mike-${index}" value="${round.mikeScore}" />
+                </div>
+                <div class="cell">${round.mikeSessionTotal}</div>
+                <div class="cell">${round.mikeOverallTotal}</div>
             </div>
-            <div class="round-scores">
-                <span>M: ${round.mikeSessionTotal}</span>
-                <span>P: ${round.preetaSessionTotal}</span>
+            <div class="cell-group">
+                <div class="cell">
+                    <input type="number" class="edit-input" id="edit-preeta-${index}" value="${round.preetaScore}" />
+                </div>
+                <div class="cell">${round.preetaSessionTotal}</div>
+                <div class="cell">${round.preetaOverallTotal}</div>
             </div>
-            <div class="round-scores">
-                <span>M: ${round.mikeOverallTotal}</span>
-                <span>P: ${round.preetaOverallTotal}</span>
-            </div>
-            <div class="round-actions">
-                <button class="btn-save" data-index="${index}">Save</button>
-                <button class="btn-cancel" data-index="${index}">Cancel</button>
+            <div class="cell actions-cell">
+                <button class="btn-icon btn-save" data-index="${index}" title="Save">💾</button>
+                <button class="btn-icon btn-cancel" data-index="${index}" title="Cancel">✖️</button>
             </div>
         `;
 
