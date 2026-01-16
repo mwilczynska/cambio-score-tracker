@@ -1,0 +1,31 @@
+{
+  "expo": {
+    "name": "Cambio Score Tracker",
+    "slug": "cambio-score-tracker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#0b2943"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.cambio.scoretracker"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#0b2943"
+      },
+      "edgeToEdgeEnabled": true,
+      "package": "com.cambio.scoretracker"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    }
+  }
+}
