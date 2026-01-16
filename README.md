@@ -1,88 +1,135 @@
 # Cambio Score Tracker
 
-A simple, mobile-friendly web application for tracking scores in the card game Cambio. Built for Mike and Preeta to easily log and track their game scores on any device.
+A mobile-friendly score tracking application for the card game Cambio. Available as both a web app and a native mobile app for Android and iOS.
+
+## Platforms
+
+### Web App
+- Hosted on GitHub Pages
+- Works on any browser (mobile or desktop)
+- Located in `/web` folder
+
+### Mobile App (Expo React Native)
+- Native Android APK available
+- iOS via Expo Go app
+- Located in `/mobile` folder
 
 ## Features
 
-- **Mobile-Responsive Design**: Works perfectly on both iPhone and Android phones
+- **Score Tracking**: Enter scores for each round with +/- toggle for negative scores
 - **Session Management**: Track multiple game sessions
 - **Automatic Calculations**:
   - Session totals (cumulative scores within a session)
   - Overall totals (lifetime cumulative scores)
-- **Persistent Storage**: All data saved locally in browser
-- **CSV Import/Export**: Upload historical scores or backup your data
-- **Recent Rounds View**: See your last 10 rounds at a glance
+  - Delta tracking (score differences between players)
+- **Character Expressions**: Dynamic character images that change based on who's losing
+- **Persistent Storage**: Data saved locally (browser localStorage or device storage)
+- **CSV Import/Export**: Backup and restore your game history
+- **Historical Rounds**: View and edit/delete past rounds
+
+## Project Structure
+
+```
+cambio-score-tracker/
+├── web/                    # Web application (GitHub Pages)
+│   ├── index.html
+│   ├── app.js
+│   ├── styles.css
+│   └── images/
+├── shared/                 # Shared business logic (ES modules)
+│   ├── CambioTracker.js
+│   ├── csvUtils.js
+│   └── constants.js
+└── mobile/                 # Expo React Native app
+    ├── App.js
+    ├── app.json
+    ├── eas.json
+    └── src/
+        ├── components/
+        ├── hooks/
+        ├── screens/
+        └── shared/
+```
 
 ## How to Use
 
 ### Adding Scores
 
-1. Enter Mike's score and Preeta's score for the current round
-2. Click "Add Round"
-3. Totals are automatically calculated and displayed
+1. Enter Mike's score and Preeta's score
+2. Use the +/- button to toggle negative scores (-1, -2 are possible in Cambio)
+3. Tap "Add New Round"
+4. Totals are automatically calculated
 
 ### Starting a New Session
 
-Click "Start New Session" when beginning a new game session. This resets the session totals while maintaining overall totals.
+Tap "Start New Session" when beginning a new game. This resets session totals while maintaining overall totals.
 
-### Importing Your Historical Data
+### Importing/Exporting Data
 
-1. Click "Import CSV"
-2. Select your `cambio_scores.csv` file
-3. Confirm the import (this will replace current data)
+- **Export**: Tap "Export CSV" to save a backup of all scores
+- **Import**: Tap "Import CSV" to restore from a backup file
 
-### Exporting Data
+## Running the Web App
 
-Click "Export CSV" to download a backup of all your scores in CSV format.
+Open `web/index.html` in a browser, or use a local server:
+
+```bash
+cd web
+python -m http.server 8000
+# Then open http://localhost:8000
+```
+
+## Running the Mobile App
+
+### Development (Expo Go)
+
+```bash
+cd mobile
+npm install
+npx expo start
+```
+
+Scan the QR code with the Expo Go app on your phone.
+
+### Building Android APK
+
+```bash
+cd mobile
+eas build -p android --profile preview
+```
+
+Download the APK and install on Android devices.
+
+### iOS Distribution
+
+iOS users can use the Expo Go app:
+1. Install "Expo Go" from the App Store
+2. Run `eas update` to publish
+3. Share the project URL with iOS users
 
 ## CSV Format
-
-The application uses the following CSV structure:
 
 ```
 Session,Mike_Score,Preeta_Score,Mike_Session_Total,Preeta_Session_Total,Mike_Overall_Total,Preeta_Overall_Total
 ```
 
-- **User inputs**: Session, Mike_Score, Preeta_Score
-- **Auto-calculated**: Mike_Session_Total, Preeta_Session_Total, Mike_Overall_Total, Preeta_Overall_Total
-
-## Local Development
-
-Simply open `index.html` in a web browser. No build process or server required!
-
-## Deploying to Web
-
-This is a static website that can be hosted on:
-
-- **GitHub Pages**: Push to GitHub and enable Pages in repository settings
-- **Netlify**: Drag and drop the folder
-- **Vercel**: Connect your GitHub repository
-- **Any static hosting service**
-
 ## Technology Stack
 
-- HTML5
-- CSS3 (with CSS Grid and Flexbox for responsive design)
-- Vanilla JavaScript (no frameworks required)
-- localStorage API for data persistence
+### Web
+- HTML5, CSS3, Vanilla JavaScript
+- ES Modules for shared logic
+- localStorage for persistence
 
-## Browser Compatibility
+### Mobile
+- React Native with Expo
+- AsyncStorage for persistence
+- expo-file-system, expo-sharing, expo-document-picker
 
-Works on all modern browsers including:
-- Chrome/Edge (mobile and desktop)
-- Safari (iOS and macOS)
-- Firefox
-- Samsung Internet
+## Version History
+
+- **v1.0-webapp-only**: Original web-only version (preserved as git tag)
+- **v2.0**: Added mobile app with shared business logic
 
 ## Data Privacy
 
-All data is stored locally in your browser. No data is sent to any server or third party.
-
-## Future Enhancements
-
-Potential features for future versions:
-- Player statistics and charts
-- Game history filtering and search
-- Multiple player support
-- Dark mode
-- PWA (installable app)
+All data is stored locally on your device. No data is sent to any server.

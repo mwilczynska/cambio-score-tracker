@@ -9,9 +9,10 @@ import {
     ActivityIndicator,
     SafeAreaView,
     StatusBar,
-    ImageBackground,
+    Image,
+    Dimensions,
 } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import { File, Paths } from 'expo-file-system/next';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
 
@@ -65,14 +66,14 @@ export default function HomeScreen() {
 
         try {
             const filename = generateCSVFilename();
-            const fileUri = FileSystem.documentDirectory + filename;
+            const file = new File(Paths.cache, filename);
 
-            await FileSystem.writeAsStringAsync(fileUri, csvContent);
+            await file.write(csvContent);
 
             if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(fileUri);
+                await Sharing.shareAsync(file.uri);
             } else {
-                Alert.alert('Success', `File saved to ${fileUri}`);
+                Alert.alert('Success', `File saved to ${file.uri}`);
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to export CSV: ' + error.message);
@@ -82,7 +83,7 @@ export default function HomeScreen() {
     const handleImportCSV = async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({
-                type: 'text/csv',
+                type: '*/*',
                 copyToCacheDirectory: true,
             });
 
@@ -90,8 +91,9 @@ export default function HomeScreen() {
                 return;
             }
 
-            const file = result.assets[0];
-            const content = await FileSystem.readAsStringAsync(file.uri);
+            const pickedFile = result.assets[0];
+            const file = new File(pickedFile.uri);
+            const content = await file.text();
             const parsedRounds = parseCSV(content);
 
             Alert.alert(
@@ -156,11 +158,12 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#0b2943" />
-            <ImageBackground
-                source={backgroundImage}
-                style={styles.backgroundImage}
-                imageStyle={styles.backgroundImageTile}
-            >
+            <View style={styles.backgroundContainer}>
+                <Image
+                    source={backgroundImage}
+                    style={styles.backgroundImage}
+                    resizeMode="repeat"
+                />
                 <ScrollView style={styles.container}>
                 {/* Header */}
                 <View style={styles.header}>
@@ -214,7 +217,7 @@ export default function HomeScreen() {
                 {/* Bottom padding */}
                 <View style={styles.bottomPadding} />
             </ScrollView>
-            </ImageBackground>
+            </View>
         </SafeAreaView>
     );
 }
@@ -224,11 +227,15 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0b2943',
     },
-    backgroundImage: {
+    backgroundContainer: {
         flex: 1,
     },
-    backgroundImageTile: {
-        resizeMode: 'repeat',
+    backgroundImage: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        width: Dimensions.get('window').width,
+        height: Dimensions.get('window').height * 2,
     },
     container: {
         flex: 1,
