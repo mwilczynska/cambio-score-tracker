@@ -6,7 +6,9 @@
       "Bash(git config:*)",
       "Bash(node --version:*)",
       "Bash(npm:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(git push:*)",
+      "Bash(git commit:*)"
     ]
   }
 }

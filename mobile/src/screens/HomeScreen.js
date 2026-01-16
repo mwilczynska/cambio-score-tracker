@@ -9,6 +9,7 @@ import {
     ActivityIndicator,
     SafeAreaView,
     StatusBar,
+    ImageBackground,
 } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -21,6 +22,8 @@ import ScoreInput from '../components/ScoreInput';
 import Statistics from '../components/Statistics';
 import CharacterImages from '../components/CharacterImages';
 import HistoricalRounds from '../components/HistoricalRounds';
+
+const backgroundImage = require('../../assets/background01.png');
 
 export default function HomeScreen() {
     const {
@@ -153,7 +156,12 @@ export default function HomeScreen() {
     return (
         <SafeAreaView style={styles.safeArea}>
             <StatusBar barStyle="light-content" backgroundColor="#0b2943" />
-            <ScrollView style={styles.container}>
+            <ImageBackground
+                source={backgroundImage}
+                style={styles.backgroundImage}
+                imageStyle={styles.backgroundImageTile}
+            >
+                <ScrollView style={styles.container}>
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.title}>Cambio Score Tracker</Text>
@@ -206,6 +214,7 @@ export default function HomeScreen() {
                 {/* Bottom padding */}
                 <View style={styles.bottomPadding} />
             </ScrollView>
+            </ImageBackground>
         </SafeAreaView>
     );
 }
@@ -215,9 +224,14 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0b2943',
     },
+    backgroundImage: {
+        flex: 1,
+    },
+    backgroundImageTile: {
+        resizeMode: 'repeat',
+    },
     container: {
         flex: 1,
-        backgroundColor: '#f0f4f8',
         padding: 16,
     },
     loadingContainer: {
