@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
-export default function ScoreInput({ onSubmit }) {
+export default function ScoreInput({ onSubmit, showTitle = true }) {
     const [mikeScore, setMikeScore] = useState('');
     const [preetaScore, setPreetaScore] = useState('');
 
@@ -30,7 +30,7 @@ export default function ScoreInput({ onSubmit }) {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Add New Round</Text>
+            {showTitle && <Text style={styles.title}>Add New Round</Text>}
 
             <View style={styles.inputRow}>
                 <View style={styles.inputGroup}>
