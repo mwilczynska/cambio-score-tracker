@@ -222,10 +222,22 @@ export default function HomeScreen() {
     );
 }
 
+// Colors matching web app (from styles.css :root)
+const COLORS = {
+    primary: '#902215',       // rgb(144, 34, 21)
+    primaryHover: '#731b11',  // rgb(115, 27, 17)
+    secondary: '#0b2943',     // rgb(11, 41, 67)
+    secondaryHover: '#081f33', // rgb(8, 31, 51)
+    cardBackground: 'rgba(255, 255, 255, 0.95)',
+    textPrimary: '#0b2943',
+    textSecondary: '#902215',
+    danger: '#902215',
+};
+
 const styles = StyleSheet.create({
     safeArea: {
         flex: 1,
-        backgroundColor: '#0b2943',
+        backgroundColor: COLORS.secondary,
     },
     backgroundContainer: {
         flex: 1,
@@ -245,7 +257,7 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#f0f4f8',
+        backgroundColor: COLORS.cardBackground,
     },
     loadingText: {
         marginTop: 16,
@@ -253,25 +265,30 @@ const styles = StyleSheet.create({
         color: '#666',
     },
     header: {
-        backgroundColor: '#0b2943',
+        backgroundColor: COLORS.cardBackground,
         borderRadius: 12,
         padding: 20,
         marginBottom: 16,
         alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
     },
     title: {
         fontSize: 28,
         fontWeight: '700',
-        color: '#fff',
+        color: COLORS.textPrimary,
         marginBottom: 8,
     },
     sessionNumber: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#f0ad4e',
+        color: COLORS.textSecondary,
     },
     newSessionButton: {
-        backgroundColor: '#f0ad4e',
+        backgroundColor: COLORS.secondary,
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: 'center',
@@ -283,7 +300,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     dataManagement: {
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.cardBackground,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
@@ -298,7 +315,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
         marginBottom: 16,
-        color: '#0b2943',
+        color: COLORS.textPrimary,
     },
     buttonRow: {
         flexDirection: 'row',
@@ -307,7 +324,7 @@ const styles = StyleSheet.create({
     },
     secondaryButton: {
         flex: 1,
-        backgroundColor: '#f0ad4e',
+        backgroundColor: COLORS.secondary,
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',
@@ -319,7 +336,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
     },
     dangerButton: {
-        backgroundColor: '#dc3545',
+        backgroundColor: COLORS.danger,
         paddingVertical: 12,
         borderRadius: 8,
         alignItems: 'center',

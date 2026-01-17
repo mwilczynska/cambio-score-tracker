@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     characterImage: {
-        width: 120,
-        height: 200,
+        width: 140,
+        height: 294,  // Maintains 200:420 ratio from web (0.476)
     },
 });

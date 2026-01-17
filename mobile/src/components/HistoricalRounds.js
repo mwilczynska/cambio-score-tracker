@@ -85,9 +85,19 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
     );
 }
 
+// Colors matching web app
+const COLORS = {
+    primary: '#902215',
+    secondary: '#0b2943',
+    cardBackground: 'rgba(255, 255, 255, 0.95)',
+    textPrimary: '#0b2943',
+    textSecondary: '#902215',
+    border: 'rgba(11, 41, 67, 0.15)',
+};
+
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.cardBackground,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
@@ -103,11 +113,11 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
         marginBottom: 16,
-        color: '#0b2943',
+        color: COLORS.textPrimary,
     },
     emptyState: {
         textAlign: 'center',
-        color: '#999',
+        color: COLORS.textSecondary,
         fontStyle: 'italic',
         paddingVertical: 20,
     },
@@ -115,14 +125,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'flex-end',
         borderBottomWidth: 2,
-        borderBottomColor: '#0b2943',
+        borderBottomColor: COLORS.secondary,
         paddingBottom: 8,
         marginBottom: 8,
     },
     headerCell: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#0b2943',
+        color: COLORS.textPrimary,
         textAlign: 'center',
     },
     smallCell: {
@@ -135,7 +145,7 @@ const styles = StyleSheet.create({
     playerHeader: {
         fontSize: 12,
         fontWeight: '700',
-        color: '#0b2943',
+        color: COLORS.textPrimary,
         marginBottom: 4,
     },
     subheaderRow: {
@@ -145,7 +155,7 @@ const styles = StyleSheet.create({
     },
     subheader: {
         fontSize: 10,
-        color: '#666',
+        color: COLORS.textSecondary,
         flex: 1,
         textAlign: 'center',
     },
@@ -161,11 +171,11 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 8,
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
+        borderBottomColor: COLORS.border,
     },
     cell: {
         fontSize: 14,
-        color: '#333',
+        color: COLORS.textPrimary,
         textAlign: 'center',
     },
     scoreGroup: {
@@ -175,7 +185,7 @@ const styles = StyleSheet.create({
     },
     scoreCell: {
         fontSize: 14,
-        color: '#333',
+        color: COLORS.textPrimary,
         flex: 1,
         textAlign: 'center',
     },

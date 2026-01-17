@@ -81,9 +81,18 @@ export default function ScoreInput({ onSubmit }) {
     );
 }
 
+// Colors matching web app
+const COLORS = {
+    primary: '#902215',
+    secondary: '#0b2943',
+    cardBackground: 'rgba(255, 255, 255, 0.95)',
+    textPrimary: '#0b2943',
+    textSecondary: '#902215',
+};
+
 const styles = StyleSheet.create({
     container: {
-        backgroundColor: '#fff',
+        backgroundColor: COLORS.cardBackground,
         borderRadius: 12,
         padding: 16,
         marginBottom: 16,
@@ -98,7 +107,7 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         textAlign: 'center',
         marginBottom: 16,
-        color: '#0b2943',
+        color: COLORS.textPrimary,
     },
     inputRow: {
         flexDirection: 'row',
@@ -112,7 +121,7 @@ const styles = StyleSheet.create({
     label: {
         fontSize: 14,
         fontWeight: '500',
-        color: '#666',
+        color: COLORS.textSecondary,
         marginBottom: 8,
     },
     inputWithToggle: {
@@ -122,14 +131,14 @@ const styles = StyleSheet.create({
     input: {
         flex: 1,
         borderWidth: 2,
-        borderColor: '#e0e0e0',
+        borderColor: 'rgba(11, 41, 67, 0.15)',
         borderRadius: 8,
         padding: 12,
         fontSize: 18,
-        color: '#333',
+        color: COLORS.textPrimary,
     },
     toggleButton: {
-        backgroundColor: '#f0ad4e',
+        backgroundColor: COLORS.secondary,
         paddingHorizontal: 12,
         paddingVertical: 12,
         borderRadius: 8,
@@ -141,7 +150,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
     },
     submitButton: {
-        backgroundColor: '#902215',
+        backgroundColor: COLORS.primary,
         paddingVertical: 14,
         borderRadius: 8,
         alignItems: 'center',
