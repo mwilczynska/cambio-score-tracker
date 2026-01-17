@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onEdit }) {
+    const [selectedIndex, setSelectedIndex] = useState(null);
+
     if (rounds.length === 0) {
         return (
             <View style={styles.container}>
@@ -17,9 +19,20 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
             'Are you sure you want to delete this round? This will recalculate all totals.',
             [
                 { text: 'Cancel', style: 'cancel' },
-                { text: 'Delete', style: 'destructive', onPress: () => onDelete(index) },
+                {
+                    text: 'Delete',
+                    style: 'destructive',
+                    onPress: () => {
+                        onDelete(index);
+                        setSelectedIndex(null);
+                    }
+                },
             ]
         );
+    };
+
+    const handleRowPress = (index) => {
+        setSelectedIndex(selectedIndex === index ? null : index);
     };
 
     return (
@@ -46,7 +59,6 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                         <Text style={styles.subheader}>Tot</Text>
                     </View>
                 </View>
-                <Text style={[styles.headerCell, styles.actionCell]}>Act</Text>
             </View>
 
             {/* Rounds */}
@@ -54,9 +66,15 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                 {roundsReversed.map((round, reverseIndex) => {
                     const actualIndex = rounds.length - 1 - reverseIndex;
                     const roundNumber = actualIndex + 1;
+                    const isSelected = selectedIndex === actualIndex;
 
                     return (
-                        <View key={actualIndex} style={styles.roundRow}>
+                        <TouchableOpacity
+                            key={actualIndex}
+                            style={[styles.roundRow, isSelected && styles.selectedRow]}
+                            onPress={() => handleRowPress(actualIndex)}
+                            activeOpacity={0.7}
+                        >
                             <Text style={[styles.cell, styles.smallCell]}>{roundNumber}</Text>
                             <Text style={[styles.cell, styles.smallCell]}>{round.session}</Text>
                             <View style={styles.scoreGroup}>
@@ -69,15 +87,17 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                                 <Text style={styles.scoreCell}>{round.preetaSessionTotal}</Text>
                                 <Text style={styles.scoreCell}>{round.preetaOverallTotal}</Text>
                             </View>
-                            <View style={styles.actionCell}>
-                                <TouchableOpacity
-                                    style={styles.actionButton}
-                                    onPress={() => handleDelete(actualIndex)}
-                                >
-                                    <Text style={styles.actionIcon}>🗑️</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                            {isSelected && (
+                                <View style={styles.actionButtons}>
+                                    <TouchableOpacity
+                                        style={styles.actionButton}
+                                        onPress={() => handleDelete(actualIndex)}
+                                    >
+                                        <Text style={styles.actionIcon}>🗑️</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </TouchableOpacity>
                     );
                 })}
             </ScrollView>
@@ -110,7 +130,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        fontWeight: '600',
+        fontWeight: '700',
         textAlign: 'center',
         marginBottom: 16,
         color: COLORS.textPrimary,
@@ -159,9 +179,13 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: 'center',
     },
-    actionCell: {
-        width: 40,
-        alignItems: 'center',
+    actionButtons: {
+        flexDirection: 'row',
+        position: 'absolute',
+        right: 8,
+        backgroundColor: COLORS.cardBackground,
+        borderRadius: 4,
+        padding: 4,
     },
     scrollView: {
         maxHeight: 280,
@@ -172,6 +196,10 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         borderBottomWidth: 1,
         borderBottomColor: COLORS.border,
+        position: 'relative',
+    },
+    selectedRow: {
+        backgroundColor: 'rgba(11, 41, 67, 0.08)',
     },
     cell: {
         fontSize: 14,

@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     },
     title: {
         fontSize: 20,
-        fontWeight: '600',
+        fontWeight: '700',
         textAlign: 'center',
         marginBottom: 16,
         color: COLORS.textPrimary,
@@ -91,6 +91,7 @@ const styles = StyleSheet.create({
         padding: 12,
         backgroundColor: 'rgba(11, 41, 67, 0.05)',
         borderRadius: 8,
+        alignItems: 'center',
     },
     highlight: {
         backgroundColor: 'rgba(11, 41, 67, 0.1)',
