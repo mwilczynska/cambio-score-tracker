@@ -1,6 +1,7 @@
 import React from 'react';
 import {
     View,
+    Text,
     ScrollView,
     StyleSheet,
     Image,
@@ -16,6 +17,7 @@ const backgroundImage = require('../../assets/background01.png');
 export default function StatsTab() {
     const {
         rounds,
+        currentSession,
         sessionTotals,
         overallTotals,
         sessionDelta,
@@ -34,6 +36,12 @@ export default function StatsTab() {
                 resizeMode="repeat"
             />
             <ScrollView style={styles.container}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.title}>Cambio Score Tracker</Text>
+                    <Text style={styles.sessionNumber}>Session: {currentSession}</Text>
+                </View>
+
                 {/* Statistics */}
                 <Statistics
                     sessionTotals={sessionTotals}
@@ -58,6 +66,14 @@ export default function StatsTab() {
     );
 }
 
+const COLORS = {
+    primary: '#902215',
+    secondary: '#0b2943',
+    cardBackground: 'rgba(255, 255, 255, 0.95)',
+    textPrimary: '#0b2943',
+    textSecondary: '#902215',
+};
+
 const styles = StyleSheet.create({
     backgroundContainer: {
         flex: 1,
@@ -72,6 +88,29 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+    },
+    header: {
+        backgroundColor: COLORS.cardBackground,
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 16,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: COLORS.textPrimary,
+        marginBottom: 8,
+    },
+    sessionNumber: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: COLORS.textSecondary,
     },
     bottomPadding: {
         height: 40,

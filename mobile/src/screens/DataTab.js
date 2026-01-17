@@ -21,6 +21,7 @@ const backgroundImage = require('../../assets/background01.png');
 export default function DataTab() {
     const {
         rounds,
+        currentSession,
         clearAllData,
         importRounds,
     } = useCambio();
@@ -37,12 +38,18 @@ export default function DataTab() {
             const filename = generateCSVFilename();
             const file = new File(Paths.cache, filename);
 
+            // Write content to cache file
             await file.write(csvContent);
 
+            // Use share sheet - select "Save to Files" or "Save to Drive" to save locally
             if (await Sharing.isAvailableAsync()) {
-                await Sharing.shareAsync(file.uri);
+                await Sharing.shareAsync(file.uri, {
+                    mimeType: 'text/csv',
+                    dialogTitle: `Save ${filename}`,
+                    UTI: 'public.comma-separated-values-text',
+                });
             } else {
-                Alert.alert('Success', `File saved to ${file.uri}`);
+                Alert.alert('Error', 'File sharing is not available on this device');
             }
         } catch (error) {
             Alert.alert('Error', 'Failed to export CSV: ' + error.message);
@@ -52,7 +59,7 @@ export default function DataTab() {
     const handleImportCSV = async () => {
         try {
             const result = await DocumentPicker.getDocumentAsync({
-                type: '*/*',
+                type: ['text/csv', 'text/comma-separated-values', '*/*'],
                 copyToCacheDirectory: true,
             });
 
@@ -123,6 +130,12 @@ export default function DataTab() {
                 resizeMode="repeat"
             />
             <ScrollView style={styles.container}>
+                {/* Header */}
+                <View style={styles.header}>
+                    <Text style={styles.title}>Cambio Score Tracker</Text>
+                    <Text style={styles.sessionNumber}>Session: {currentSession}</Text>
+                </View>
+
                 {/* Data Management */}
                 <View style={styles.dataManagement}>
                     <Text style={styles.sectionTitle}>Data Management</Text>
@@ -175,6 +188,29 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+    },
+    header: {
+        backgroundColor: COLORS.cardBackground,
+        borderRadius: 12,
+        padding: 20,
+        marginBottom: 16,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 3,
+    },
+    title: {
+        fontSize: 28,
+        fontWeight: '700',
+        color: COLORS.textPrimary,
+        marginBottom: 8,
+    },
+    sessionNumber: {
+        fontSize: 18,
+        fontWeight: '600',
+        color: COLORS.textSecondary,
     },
     dataManagement: {
         backgroundColor: COLORS.cardBackground,

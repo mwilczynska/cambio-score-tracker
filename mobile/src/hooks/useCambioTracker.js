@@ -1,6 +1,6 @@
 // React Hook for Cambio Score Tracker
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { CambioTrackerCore } from '../shared/CambioTracker';
 import { saveData, loadData } from '../storage/asyncStorage';
 
@@ -73,27 +73,40 @@ export function useCambioTracker() {
     }, [tracker, saveAndRefresh]);
 
     // Import rounds
-    const importRounds = useCallback(async (rounds) => {
-        tracker.importRounds(rounds);
+    const importRounds = useCallback(async (importedRounds) => {
+        tracker.importRounds(importedRounds);
         await saveAndRefresh();
     }, [tracker, saveAndRefresh]);
+
+    // Memoize computed values to prevent recalculation on every render
+    const rounds = tracker.rounds;
+    const currentSession = tracker.currentSession;
+
+    const sessionTotals = useMemo(() => tracker.getSessionTotals(), [rounds, currentSession]);
+    const overallTotals = useMemo(() => tracker.getOverallTotals(), [rounds]);
+    const sessionDelta = useMemo(() => tracker.getSessionDelta(), [rounds, currentSession]);
+    const overallDelta = useMemo(() => tracker.getOverallDelta(), [rounds]);
+    const angerLevels = useMemo(() => tracker.getAngerLevels(), [rounds, currentSession]);
+    const roundsReversed = useMemo(() => tracker.getRoundsReversed(), [rounds]);
+
+    const formatDelta = useCallback((delta) => tracker.formatDelta(delta), [tracker]);
 
     return {
         // State
         isLoading,
-        rounds: tracker.rounds,
-        currentSession: tracker.currentSession,
+        rounds,
+        currentSession,
 
-        // Computed values
-        sessionTotals: tracker.getSessionTotals(),
-        overallTotals: tracker.getOverallTotals(),
-        sessionDelta: tracker.getSessionDelta(),
-        overallDelta: tracker.getOverallDelta(),
-        angerLevels: tracker.getAngerLevels(),
-        roundsReversed: tracker.getRoundsReversed(),
+        // Computed values (memoized)
+        sessionTotals,
+        overallTotals,
+        sessionDelta,
+        overallDelta,
+        angerLevels,
+        roundsReversed,
 
         // Methods
-        formatDelta: (delta) => tracker.formatDelta(delta),
+        formatDelta,
         addRound,
         deleteRound,
         editRound,
