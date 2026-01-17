@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, TextInput, Modal } from 'react-native';
 
 export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onEdit }) {
     const [selectedIndex, setSelectedIndex] = useState(null);
+    const [editModalVisible, setEditModalVisible] = useState(false);
+    const [editingIndex, setEditingIndex] = useState(null);
+    const [editMikeScore, setEditMikeScore] = useState('');
+    const [editPreetaScore, setEditPreetaScore] = useState('');
 
     if (rounds.length === 0) {
         return (
@@ -29,6 +33,28 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                 },
             ]
         );
+    };
+
+    const handleEdit = (index) => {
+        const round = rounds[index];
+        setEditingIndex(index);
+        setEditMikeScore(String(round.mikeScore));
+        setEditPreetaScore(String(round.preetaScore));
+        setEditModalVisible(true);
+    };
+
+    const handleSaveEdit = () => {
+        const mike = parseInt(editMikeScore);
+        const preeta = parseInt(editPreetaScore);
+
+        if (isNaN(mike) || isNaN(preeta)) {
+            Alert.alert('Invalid Input', 'Please enter valid numbers for both scores');
+            return;
+        }
+
+        onEdit(editingIndex, mike, preeta);
+        setEditModalVisible(false);
+        setSelectedIndex(null);
     };
 
     const handleRowPress = (index) => {
@@ -91,6 +117,12 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                                 <View style={styles.actionButtons}>
                                     <TouchableOpacity
                                         style={styles.actionButton}
+                                        onPress={() => handleEdit(actualIndex)}
+                                    >
+                                        <Text style={styles.actionIcon}>✏️</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity
+                                        style={styles.actionButton}
                                         onPress={() => handleDelete(actualIndex)}
                                     >
                                         <Text style={styles.actionIcon}>🗑️</Text>
@@ -101,6 +133,58 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                     );
                 })}
             </ScrollView>
+
+            {/* Edit Modal */}
+            <Modal
+                visible={editModalVisible}
+                transparent={true}
+                animationType="fade"
+                onRequestClose={() => setEditModalVisible(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <Text style={styles.modalTitle}>Edit Round {editingIndex !== null ? editingIndex + 1 : ''}</Text>
+
+                        <View style={styles.modalInputRow}>
+                            <View style={styles.modalInputGroup}>
+                                <Text style={styles.modalLabel}>Mike's Score</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    value={editMikeScore}
+                                    onChangeText={setEditMikeScore}
+                                    keyboardType="numeric"
+                                    placeholder="0"
+                                />
+                            </View>
+                            <View style={styles.modalInputGroup}>
+                                <Text style={styles.modalLabel}>Preeta's Score</Text>
+                                <TextInput
+                                    style={styles.modalInput}
+                                    value={editPreetaScore}
+                                    onChangeText={setEditPreetaScore}
+                                    keyboardType="numeric"
+                                    placeholder="0"
+                                />
+                            </View>
+                        </View>
+
+                        <View style={styles.modalButtons}>
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.cancelButton]}
+                                onPress={() => setEditModalVisible(false)}
+                            >
+                                <Text style={styles.cancelButtonText}>Cancel</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.modalButton, styles.saveButton]}
+                                onPress={handleSaveEdit}
+                            >
+                                <Text style={styles.saveButtonText}>Save</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
         </View>
     );
 }
@@ -156,7 +240,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
     },
     smallCell: {
-        width: 30,
+        width: 36,
     },
     playerGroup: {
         flex: 1,
@@ -202,7 +286,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(11, 41, 67, 0.08)',
     },
     cell: {
-        fontSize: 14,
+        fontSize: 11,
         color: COLORS.textPrimary,
         textAlign: 'center',
     },
@@ -212,7 +296,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-around',
     },
     scoreCell: {
-        fontSize: 14,
+        fontSize: 11,
         color: COLORS.textPrimary,
         flex: 1,
         textAlign: 'center',
@@ -222,5 +306,77 @@ const styles = StyleSheet.create({
     },
     actionIcon: {
         fontSize: 16,
+    },
+    // Modal styles
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        backgroundColor: COLORS.cardBackground,
+        borderRadius: 12,
+        padding: 20,
+        width: '85%',
+        maxWidth: 400,
+    },
+    modalTitle: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: COLORS.textPrimary,
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    modalInputRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 20,
+    },
+    modalInputGroup: {
+        flex: 1,
+        marginHorizontal: 4,
+    },
+    modalLabel: {
+        fontSize: 14,
+        fontWeight: '500',
+        color: COLORS.textSecondary,
+        marginBottom: 8,
+    },
+    modalInput: {
+        borderWidth: 2,
+        borderColor: COLORS.border,
+        borderRadius: 8,
+        padding: 12,
+        fontSize: 18,
+        color: COLORS.textPrimary,
+        textAlign: 'center',
+    },
+    modalButtons: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    modalButton: {
+        flex: 1,
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+        marginHorizontal: 4,
+    },
+    cancelButton: {
+        backgroundColor: 'rgba(11, 41, 67, 0.1)',
+    },
+    cancelButtonText: {
+        color: COLORS.textPrimary,
+        fontSize: 16,
+        fontWeight: '600',
+    },
+    saveButton: {
+        backgroundColor: COLORS.primary,
+    },
+    saveButtonText: {
+        color: '#fff',
+        fontSize: 16,
+        fontWeight: '600',
     },
 });

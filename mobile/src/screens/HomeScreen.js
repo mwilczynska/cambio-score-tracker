@@ -40,6 +40,7 @@ export default function HomeScreen() {
         formatDelta,
         addRound,
         deleteRound,
+        editRound,
         startNewSession,
         clearAllData,
         importRounds,
@@ -196,6 +197,7 @@ export default function HomeScreen() {
                     rounds={rounds}
                     roundsReversed={roundsReversed}
                     onDelete={deleteRound}
+                    onEdit={editRound}
                 />
 
                 {/* Data Management */}
