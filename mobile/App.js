@@ -58,9 +58,10 @@ function AppContent() {
                     },
                     tabBarLabelStyle: {
                         fontSize: 12,
-                        fontWeight: '600',
+                        fontWeight: 'bold',
                         marginBottom: 5,
                     },
+                    animation: 'none',
                 })}
             >
                 <Tab.Screen

@@ -21,7 +21,6 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0b2943"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.cambio.scoretracker"
     },
     "web": {
