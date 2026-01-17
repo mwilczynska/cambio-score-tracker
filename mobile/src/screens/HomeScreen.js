@@ -7,11 +7,11 @@ import {
     StyleSheet,
     Alert,
     ActivityIndicator,
-    SafeAreaView,
-    StatusBar,
     Image,
     Dimensions,
 } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { File, Paths } from 'expo-file-system/next';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';
@@ -156,8 +156,8 @@ export default function HomeScreen() {
     }
 
     return (
-        <SafeAreaView style={styles.safeArea}>
-            <StatusBar barStyle="light-content" backgroundColor={COLORS.secondary} translucent={false} />
+        <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
+            <StatusBar style="light" backgroundColor={COLORS.secondary} />
             <View style={styles.backgroundContainer}>
                 <Image
                     source={backgroundImage}
