@@ -79,9 +79,33 @@ python -m http.server 8000
 # Then open http://localhost:8000
 ```
 
-## Running the Mobile App
+## Installing the Mobile App
 
-### Development (Expo Go)
+### Android Installation
+
+1. Download the APK file from the [Expo Build Page](https://expo.dev/accounts/chawinski/projects/cambio-score-tracker/builds)
+2. On your Android device, open the downloaded APK file
+3. If prompted, allow installation from unknown sources:
+   - Go to **Settings > Security** (or **Settings > Apps > Special access**)
+   - Enable **Install unknown apps** for your browser or file manager
+4. Tap **Install** when prompted
+5. Once installed, open **Cambio Score Tracker** from your app drawer
+
+### iOS Installation (via Expo Go)
+
+Since iOS requires an Apple Developer account ($99/year) for direct app distribution, iOS users can run the app through Expo Go for free:
+
+1. Install **Expo Go** from the [App Store](https://apps.apple.com/app/expo-go/id982107779)
+2. Open Expo Go on your iPhone/iPad
+3. Tap the **Home** tab and select **Scan QR code**, or tap **Enter URL manually**
+4. Enter this URL: `exp://u.expo.dev/3d67f210-9c06-4c47-9cff-40d8a2d922f2`
+5. The app will load and run within Expo Go
+
+**Note for iOS users**: The app runs inside Expo Go, so you'll see "Expo Go" in your app switcher. All features work identically to the Android version.
+
+## Development Setup
+
+### Running Locally (Expo Go)
 
 ```bash
 cd mobile
@@ -98,14 +122,20 @@ cd mobile
 eas build -p android --profile preview
 ```
 
-Download the APK and install on Android devices.
+Or build via the Expo website:
+1. Go to [expo.dev](https://expo.dev/accounts/chawinski/projects/cambio-score-tracker)
+2. Click **Create a build**
+3. Set **Git ref** to `master` and **Root directory** to `mobile`
+4. Select Android and the preview profile
 
-### iOS Distribution
+### Publishing Updates for iOS Users
 
-iOS users can use the Expo Go app:
-1. Install "Expo Go" from the App Store
-2. Run `eas update` to publish
-3. Share the project URL with iOS users
+```bash
+cd mobile
+eas update --branch preview --message "Your update message"
+```
+
+iOS users will automatically receive updates when they open the app in Expo Go.
 
 ## CSV Format
 
