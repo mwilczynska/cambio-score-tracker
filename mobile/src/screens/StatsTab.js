@@ -5,6 +5,7 @@ import {
     StyleSheet,
     Image,
     Dimensions,
+    ScrollView,
 } from 'react-native';
 
 import { useCambio } from '../context/CambioContext';
@@ -34,7 +35,11 @@ export default function StatsTab() {
                 style={styles.backgroundImage}
                 resizeMode="repeat"
             />
-            <View style={styles.container}>
+            <ScrollView
+                style={styles.container}
+                contentContainerStyle={styles.contentContainer}
+                nestedScrollEnabled={true}
+            >
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.title}>Cambio Score Tracker</Text>
@@ -50,14 +55,14 @@ export default function StatsTab() {
                     formatDelta={formatDelta}
                 />
 
-                {/* Historical Rounds - uses FlatList internally for virtualization */}
+                {/* Historical Rounds - has internal FlatList for scrolling */}
                 <HistoricalRounds
                     rounds={rounds}
                     roundsReversed={roundsReversed}
                     onDelete={deleteRound}
                     onEdit={editRound}
                 />
-            </View>
+            </ScrollView>
         </View>
     );
 }
@@ -84,6 +89,9 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 16,
+    },
+    contentContainer: {
+        paddingBottom: 20,
     },
     header: {
         backgroundColor: COLORS.cardBackground,

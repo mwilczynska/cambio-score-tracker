@@ -1,5 +1,5 @@
 import React, { useState, useCallback, memo } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, TextInput, Modal } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, Alert, TextInput, Modal } from 'react-native';
 
 // Memoized row component to prevent unnecessary re-renders
 const RoundRow = memo(({ round, roundNumber, actualIndex, isSelected, onPress, onEdit, onDelete }) => {
@@ -192,28 +192,6 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
         setEditModalVisible(false);
     }, []);
 
-    const renderItem = useCallback(({ item: round, index: reverseIndex }) => {
-        const actualIndex = rounds.length - 1 - reverseIndex;
-        const roundNumber = actualIndex + 1;
-        const isSelected = selectedIndex === actualIndex;
-
-        return (
-            <RoundRow
-                round={round}
-                roundNumber={roundNumber}
-                actualIndex={actualIndex}
-                isSelected={isSelected}
-                onPress={handleRowPress}
-                onEdit={handleEdit}
-                onDelete={handleDelete}
-            />
-        );
-    }, [rounds.length, selectedIndex, handleRowPress, handleEdit, handleDelete]);
-
-    const keyExtractor = useCallback((item, index) => {
-        return String(rounds.length - 1 - index);
-    }, [rounds.length]);
-
     // Early return AFTER all hooks are called
     if (rounds.length === 0) {
         return (
@@ -250,13 +228,29 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                 </View>
             </View>
 
-            {/* Virtualized Rounds List */}
+            {/* Virtualized Rounds List - shows ~10 rows, scrolls through all */}
             <FlatList
                 data={roundsReversed}
-                renderItem={renderItem}
-                keyExtractor={keyExtractor}
-                style={styles.flatList}
-                initialNumToRender={15}
+                renderItem={({ item: round, index: reverseIndex }) => {
+                    const actualIndex = rounds.length - 1 - reverseIndex;
+                    const roundNumber = actualIndex + 1;
+                    const isSelected = selectedIndex === actualIndex;
+
+                    return (
+                        <RoundRow
+                            round={round}
+                            roundNumber={roundNumber}
+                            actualIndex={actualIndex}
+                            isSelected={isSelected}
+                            onPress={handleRowPress}
+                            onEdit={handleEdit}
+                            onDelete={handleDelete}
+                        />
+                    );
+                }}
+                keyExtractor={(item, index) => String(rounds.length - 1 - index)}
+                style={styles.roundsList}
+                initialNumToRender={10}
                 maxToRenderPerBatch={10}
                 windowSize={5}
                 removeClippedSubviews={true}
@@ -265,6 +259,7 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                     offset: 40 * index,
                     index,
                 })}
+                nestedScrollEnabled={true}
             />
 
             {/* Edit Modal - separate component to prevent list re-renders */}
@@ -301,7 +296,6 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 3,
-        maxHeight: 400,
     },
     title: {
         fontSize: 20,
@@ -362,8 +356,8 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 4,
     },
-    flatList: {
-        maxHeight: 280,
+    roundsList: {
+        maxHeight: 400,
     },
     roundRow: {
         flexDirection: 'row',
