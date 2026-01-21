@@ -2,7 +2,6 @@ import React from 'react';
 import {
     View,
     Text,
-    ScrollView,
     StyleSheet,
     Image,
     Dimensions,
@@ -35,7 +34,7 @@ export default function StatsTab() {
                 style={styles.backgroundImage}
                 resizeMode="repeat"
             />
-            <ScrollView style={styles.container}>
+            <View style={styles.container}>
                 {/* Header */}
                 <View style={styles.header}>
                     <Text style={styles.title}>Cambio Score Tracker</Text>
@@ -51,17 +50,14 @@ export default function StatsTab() {
                     formatDelta={formatDelta}
                 />
 
-                {/* Historical Rounds */}
+                {/* Historical Rounds - uses FlatList internally for virtualization */}
                 <HistoricalRounds
                     rounds={rounds}
                     roundsReversed={roundsReversed}
                     onDelete={deleteRound}
                     onEdit={editRound}
                 />
-
-                {/* Bottom padding */}
-                <View style={styles.bottomPadding} />
-            </ScrollView>
+            </View>
         </View>
     );
 }
@@ -111,8 +107,5 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: '600',
         color: COLORS.textSecondary,
-    },
-    bottomPadding: {
-        height: 40,
     },
 });

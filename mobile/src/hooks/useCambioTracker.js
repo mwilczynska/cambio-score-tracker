@@ -11,11 +11,12 @@ import { saveData, loadData } from '../storage/asyncStorage';
 export function useCambioTracker() {
     const [tracker] = useState(() => new CambioTrackerCore());
     const [isLoading, setIsLoading] = useState(true);
-    const [, forceUpdate] = useState({});
+    // State version counter - increments when data changes, triggers useMemo recalculation
+    const [stateVersion, setStateVersion] = useState(0);
 
     // Force re-render when tracker state changes
     const refresh = useCallback(() => {
-        forceUpdate({});
+        setStateVersion(v => v + 1);
     }, []);
 
     // Load data on mount
@@ -78,16 +79,15 @@ export function useCambioTracker() {
         await saveAndRefresh();
     }, [tracker, saveAndRefresh]);
 
-    // Memoize computed values to prevent recalculation on every render
-    const rounds = tracker.rounds;
-    const currentSession = tracker.currentSession;
-
-    const sessionTotals = useMemo(() => tracker.getSessionTotals(), [rounds, currentSession]);
-    const overallTotals = useMemo(() => tracker.getOverallTotals(), [rounds]);
-    const sessionDelta = useMemo(() => tracker.getSessionDelta(), [rounds, currentSession]);
-    const overallDelta = useMemo(() => tracker.getOverallDelta(), [rounds]);
-    const angerLevels = useMemo(() => tracker.getAngerLevels(), [rounds, currentSession]);
-    const roundsReversed = useMemo(() => tracker.getRoundsReversed(), [rounds]);
+    // Memoize computed values - only recalculate when stateVersion changes
+    const rounds = useMemo(() => tracker.rounds, [tracker, stateVersion]);
+    const currentSession = useMemo(() => tracker.currentSession, [tracker, stateVersion]);
+    const sessionTotals = useMemo(() => tracker.getSessionTotals(), [tracker, stateVersion]);
+    const overallTotals = useMemo(() => tracker.getOverallTotals(), [tracker, stateVersion]);
+    const sessionDelta = useMemo(() => tracker.getSessionDelta(), [tracker, stateVersion]);
+    const overallDelta = useMemo(() => tracker.getOverallDelta(), [tracker, stateVersion]);
+    const angerLevels = useMemo(() => tracker.getAngerLevels(), [tracker, stateVersion]);
+    const roundsReversed = useMemo(() => tracker.getRoundsReversed(), [tracker, stateVersion]);
 
     const formatDelta = useCallback((delta) => tracker.formatDelta(delta), [tracker]);
 

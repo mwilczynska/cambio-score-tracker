@@ -1,23 +1,154 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, TextInput, Modal } from 'react-native';
+import React, { useState, useCallback, memo } from 'react';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, TextInput, Modal } from 'react-native';
+
+// Memoized row component to prevent unnecessary re-renders
+const RoundRow = memo(({ round, roundNumber, actualIndex, isSelected, onPress, onEdit, onDelete }) => {
+    return (
+        <TouchableOpacity
+            style={[styles.roundRow, isSelected && styles.selectedRow]}
+            onPress={() => onPress(actualIndex)}
+            activeOpacity={0.7}
+        >
+            <Text style={[styles.cell, styles.smallCell]}>{roundNumber}</Text>
+            <Text style={[styles.cell, styles.smallCell]}>{round.session}</Text>
+            <View style={styles.scoreGroup}>
+                <Text style={styles.scoreCell}>{round.mikeScore}</Text>
+                <Text style={styles.scoreCell}>{round.mikeSessionTotal}</Text>
+                <Text style={styles.scoreCell}>{round.mikeOverallTotal}</Text>
+            </View>
+            <View style={styles.scoreGroup}>
+                <Text style={styles.scoreCell}>{round.preetaScore}</Text>
+                <Text style={styles.scoreCell}>{round.preetaSessionTotal}</Text>
+                <Text style={styles.scoreCell}>{round.preetaOverallTotal}</Text>
+            </View>
+            {isSelected && (
+                <View style={styles.actionButtons}>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => onEdit(actualIndex)}
+                    >
+                        <Text style={styles.actionIcon}>✏️</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={styles.actionButton}
+                        onPress={() => onDelete(actualIndex)}
+                    >
+                        <Text style={styles.actionIcon}>🗑️</Text>
+                    </TouchableOpacity>
+                </View>
+            )}
+        </TouchableOpacity>
+    );
+});
+
+// Separate Edit Modal component to isolate state changes
+const EditModal = memo(({ visible, roundNumber, initialMikeScore, initialPreetaScore, onSave, onClose }) => {
+    const [editMikeScore, setEditMikeScore] = useState('');
+    const [editPreetaScore, setEditPreetaScore] = useState('');
+    const [mikeIsNegative, setMikeIsNegative] = useState(false);
+    const [preetaIsNegative, setPreetaIsNegative] = useState(false);
+
+    // Reset state when modal opens with new values
+    React.useEffect(() => {
+        if (visible) {
+            const mikeNeg = initialMikeScore < 0;
+            const preetaNeg = initialPreetaScore < 0;
+            setMikeIsNegative(mikeNeg);
+            setPreetaIsNegative(preetaNeg);
+            setEditMikeScore(String(Math.abs(initialMikeScore)));
+            setEditPreetaScore(String(Math.abs(initialPreetaScore)));
+        }
+    }, [visible, initialMikeScore, initialPreetaScore]);
+
+    const handleSave = () => {
+        const mikeAbs = parseInt(editMikeScore) || 0;
+        const preetaAbs = parseInt(editPreetaScore) || 0;
+        const mike = mikeIsNegative ? -mikeAbs : mikeAbs;
+        const preeta = preetaIsNegative ? -preetaAbs : preetaAbs;
+        onSave(mike, preeta);
+    };
+
+    return (
+        <Modal
+            visible={visible}
+            transparent={true}
+            animationType="fade"
+            onRequestClose={onClose}
+        >
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                    <Text style={styles.modalTitle}>Edit Round {roundNumber}</Text>
+
+                    <View style={styles.modalInputRow}>
+                        <View style={styles.modalInputGroup}>
+                            <Text style={styles.modalLabel}>Mike's Score</Text>
+                            <View style={styles.inputWithToggle}>
+                                <TouchableOpacity
+                                    style={[styles.signToggle, mikeIsNegative && styles.signToggleActive]}
+                                    onPress={() => setMikeIsNegative(!mikeIsNegative)}
+                                >
+                                    <Text style={[styles.signToggleText, mikeIsNegative && styles.signToggleTextActive]}>
+                                        {mikeIsNegative ? '−' : '+'}
+                                    </Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={styles.modalInputWithToggle}
+                                    value={editMikeScore}
+                                    onChangeText={setEditMikeScore}
+                                    keyboardType="numeric"
+                                    placeholder="0"
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.modalInputGroup}>
+                            <Text style={styles.modalLabel}>Preeta's Score</Text>
+                            <View style={styles.inputWithToggle}>
+                                <TouchableOpacity
+                                    style={[styles.signToggle, preetaIsNegative && styles.signToggleActive]}
+                                    onPress={() => setPreetaIsNegative(!preetaIsNegative)}
+                                >
+                                    <Text style={[styles.signToggleText, preetaIsNegative && styles.signToggleTextActive]}>
+                                        {preetaIsNegative ? '−' : '+'}
+                                    </Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    style={styles.modalInputWithToggle}
+                                    value={editPreetaScore}
+                                    onChangeText={setEditPreetaScore}
+                                    keyboardType="numeric"
+                                    placeholder="0"
+                                />
+                            </View>
+                        </View>
+                    </View>
+
+                    <View style={styles.modalButtons}>
+                        <TouchableOpacity
+                            style={[styles.modalButton, styles.cancelButton]}
+                            onPress={onClose}
+                        >
+                            <Text style={styles.cancelButtonText}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.modalButton, styles.saveButton]}
+                            onPress={handleSave}
+                        >
+                            <Text style={styles.saveButtonText}>Save</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        </Modal>
+    );
+});
 
 export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onEdit }) {
     const [selectedIndex, setSelectedIndex] = useState(null);
     const [editModalVisible, setEditModalVisible] = useState(false);
-    const [editingIndex, setEditingIndex] = useState(null);
-    const [editMikeScore, setEditMikeScore] = useState('');
-    const [editPreetaScore, setEditPreetaScore] = useState('');
+    const [editingRound, setEditingRound] = useState({ index: null, mikeScore: 0, preetaScore: 0 });
 
-    if (rounds.length === 0) {
-        return (
-            <View style={styles.container}>
-                <Text style={styles.title}>Historical Rounds</Text>
-                <Text style={styles.emptyState}>No rounds yet. Add your first round above!</Text>
-            </View>
-        );
-    }
-
-    const handleDelete = (index) => {
+    // All hooks must be called before any early returns
+    const handleDelete = useCallback((index) => {
         Alert.alert(
             'Delete Round',
             'Are you sure you want to delete this round? This will recalculate all totals.',
@@ -33,37 +164,69 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                 },
             ]
         );
-    };
+    }, [onDelete]);
 
-    const handleEdit = (index) => {
+    const handleEdit = useCallback((index) => {
         const round = rounds[index];
-        setEditingIndex(index);
-        setEditMikeScore(String(round.mikeScore));
-        setEditPreetaScore(String(round.preetaScore));
-        setEditModalVisible(true);
-    };
-
-    const handleSaveEdit = () => {
-        const mike = parseInt(editMikeScore);
-        const preeta = parseInt(editPreetaScore);
-
-        if (isNaN(mike) || isNaN(preeta)) {
-            Alert.alert('Invalid Input', 'Please enter valid numbers for both scores');
-            return;
+        if (round) {
+            setEditingRound({
+                index,
+                mikeScore: round.mikeScore,
+                preetaScore: round.preetaScore
+            });
+            setEditModalVisible(true);
         }
+    }, [rounds]);
 
-        onEdit(editingIndex, mike, preeta);
+    const handleSaveEdit = useCallback((mike, preeta) => {
+        onEdit(editingRound.index, mike, preeta);
         setEditModalVisible(false);
         setSelectedIndex(null);
-    };
+    }, [editingRound.index, onEdit]);
 
-    const handleRowPress = (index) => {
-        setSelectedIndex(selectedIndex === index ? null : index);
-    };
+    const handleRowPress = useCallback((index) => {
+        setSelectedIndex(prev => prev === index ? null : index);
+    }, []);
+
+    const handleCloseModal = useCallback(() => {
+        setEditModalVisible(false);
+    }, []);
+
+    const renderItem = useCallback(({ item: round, index: reverseIndex }) => {
+        const actualIndex = rounds.length - 1 - reverseIndex;
+        const roundNumber = actualIndex + 1;
+        const isSelected = selectedIndex === actualIndex;
+
+        return (
+            <RoundRow
+                round={round}
+                roundNumber={roundNumber}
+                actualIndex={actualIndex}
+                isSelected={isSelected}
+                onPress={handleRowPress}
+                onEdit={handleEdit}
+                onDelete={handleDelete}
+            />
+        );
+    }, [rounds.length, selectedIndex, handleRowPress, handleEdit, handleDelete]);
+
+    const keyExtractor = useCallback((item, index) => {
+        return String(rounds.length - 1 - index);
+    }, [rounds.length]);
+
+    // Early return AFTER all hooks are called
+    if (rounds.length === 0) {
+        return (
+            <View style={styles.container}>
+                <Text style={styles.title}>Historical Rounds</Text>
+                <Text style={styles.emptyState}>No rounds yet. Add your first round above!</Text>
+            </View>
+        );
+    }
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Historical Rounds</Text>
+            <Text style={styles.title}>Historical Rounds ({rounds.length})</Text>
 
             {/* Header */}
             <View style={styles.headerRow}>
@@ -87,104 +250,32 @@ export default function HistoricalRounds({ rounds, roundsReversed, onDelete, onE
                 </View>
             </View>
 
-            {/* Rounds */}
-            <ScrollView style={styles.scrollView} nestedScrollEnabled={true}>
-                {roundsReversed.map((round, reverseIndex) => {
-                    const actualIndex = rounds.length - 1 - reverseIndex;
-                    const roundNumber = actualIndex + 1;
-                    const isSelected = selectedIndex === actualIndex;
-
-                    return (
-                        <TouchableOpacity
-                            key={actualIndex}
-                            style={[styles.roundRow, isSelected && styles.selectedRow]}
-                            onPress={() => handleRowPress(actualIndex)}
-                            activeOpacity={0.7}
-                        >
-                            <Text style={[styles.cell, styles.smallCell]}>{roundNumber}</Text>
-                            <Text style={[styles.cell, styles.smallCell]}>{round.session}</Text>
-                            <View style={styles.scoreGroup}>
-                                <Text style={styles.scoreCell}>{round.mikeScore}</Text>
-                                <Text style={styles.scoreCell}>{round.mikeSessionTotal}</Text>
-                                <Text style={styles.scoreCell}>{round.mikeOverallTotal}</Text>
-                            </View>
-                            <View style={styles.scoreGroup}>
-                                <Text style={styles.scoreCell}>{round.preetaScore}</Text>
-                                <Text style={styles.scoreCell}>{round.preetaSessionTotal}</Text>
-                                <Text style={styles.scoreCell}>{round.preetaOverallTotal}</Text>
-                            </View>
-                            {isSelected && (
-                                <View style={styles.actionButtons}>
-                                    <TouchableOpacity
-                                        style={styles.actionButton}
-                                        onPress={() => handleEdit(actualIndex)}
-                                    >
-                                        <Text style={styles.actionIcon}>✏️</Text>
-                                    </TouchableOpacity>
-                                    <TouchableOpacity
-                                        style={styles.actionButton}
-                                        onPress={() => handleDelete(actualIndex)}
-                                    >
-                                        <Text style={styles.actionIcon}>🗑️</Text>
-                                    </TouchableOpacity>
-                                </View>
-                            )}
-                        </TouchableOpacity>
-                    );
+            {/* Virtualized Rounds List */}
+            <FlatList
+                data={roundsReversed}
+                renderItem={renderItem}
+                keyExtractor={keyExtractor}
+                style={styles.flatList}
+                initialNumToRender={15}
+                maxToRenderPerBatch={10}
+                windowSize={5}
+                removeClippedSubviews={true}
+                getItemLayout={(data, index) => ({
+                    length: 40,
+                    offset: 40 * index,
+                    index,
                 })}
-            </ScrollView>
+            />
 
-            {/* Edit Modal */}
-            <Modal
+            {/* Edit Modal - separate component to prevent list re-renders */}
+            <EditModal
                 visible={editModalVisible}
-                transparent={true}
-                animationType="fade"
-                onRequestClose={() => setEditModalVisible(false)}
-            >
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
-                        <Text style={styles.modalTitle}>Edit Round {editingIndex !== null ? editingIndex + 1 : ''}</Text>
-
-                        <View style={styles.modalInputRow}>
-                            <View style={styles.modalInputGroup}>
-                                <Text style={styles.modalLabel}>Mike's Score</Text>
-                                <TextInput
-                                    style={styles.modalInput}
-                                    value={editMikeScore}
-                                    onChangeText={setEditMikeScore}
-                                    keyboardType="numeric"
-                                    placeholder="0"
-                                />
-                            </View>
-                            <View style={styles.modalInputGroup}>
-                                <Text style={styles.modalLabel}>Preeta's Score</Text>
-                                <TextInput
-                                    style={styles.modalInput}
-                                    value={editPreetaScore}
-                                    onChangeText={setEditPreetaScore}
-                                    keyboardType="numeric"
-                                    placeholder="0"
-                                />
-                            </View>
-                        </View>
-
-                        <View style={styles.modalButtons}>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.cancelButton]}
-                                onPress={() => setEditModalVisible(false)}
-                            >
-                                <Text style={styles.cancelButtonText}>Cancel</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity
-                                style={[styles.modalButton, styles.saveButton]}
-                                onPress={handleSaveEdit}
-                            >
-                                <Text style={styles.saveButtonText}>Save</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </View>
-            </Modal>
+                roundNumber={editingRound.index !== null ? editingRound.index + 1 : ''}
+                initialMikeScore={editingRound.mikeScore}
+                initialPreetaScore={editingRound.preetaScore}
+                onSave={handleSaveEdit}
+                onClose={handleCloseModal}
+            />
         </View>
     );
 }
@@ -271,7 +362,7 @@ const styles = StyleSheet.create({
         borderRadius: 4,
         padding: 4,
     },
-    scrollView: {
+    flatList: {
         maxHeight: 280,
     },
     roundRow: {
@@ -281,6 +372,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: COLORS.border,
         position: 'relative',
+        height: 40,
     },
     selectedRow: {
         backgroundColor: 'rgba(11, 41, 67, 0.08)',
@@ -348,6 +440,47 @@ const styles = StyleSheet.create({
         borderColor: COLORS.border,
         borderRadius: 8,
         padding: 12,
+        fontSize: 18,
+        color: COLORS.textPrimary,
+        textAlign: 'center',
+    },
+    inputWithToggle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    signToggle: {
+        width: 36,
+        height: 44,
+        borderWidth: 2,
+        borderColor: COLORS.border,
+        borderRadius: 8,
+        borderTopRightRadius: 0,
+        borderBottomRightRadius: 0,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(11, 41, 67, 0.05)',
+    },
+    signToggleActive: {
+        backgroundColor: COLORS.primary,
+        borderColor: COLORS.primary,
+    },
+    signToggleText: {
+        fontSize: 20,
+        fontWeight: '700',
+        color: COLORS.textPrimary,
+    },
+    signToggleTextActive: {
+        color: '#fff',
+    },
+    modalInputWithToggle: {
+        flex: 1,
+        borderWidth: 2,
+        borderLeftWidth: 0,
+        borderColor: COLORS.border,
+        borderRadius: 8,
+        borderTopLeftRadius: 0,
+        borderBottomLeftRadius: 0,
+        padding: 10,
         fontSize: 18,
         color: COLORS.textPrimary,
         textAlign: 'center',

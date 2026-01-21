@@ -95,13 +95,11 @@ export class CambioTrackerCore {
         this.rounds.splice(index, 1);
         this.recalculateAllTotals();
 
-        // Update current session
-        if (this.rounds.length > 0) {
-            const lastRound = this.rounds[this.rounds.length - 1];
-            this.currentSession = lastRound.session + 1;
-        } else {
+        // Only reset currentSession if all rounds are deleted
+        if (this.rounds.length === 0) {
             this.currentSession = 1;
         }
+        // Otherwise keep currentSession as-is so user stays in their current session
     }
 
     /**
